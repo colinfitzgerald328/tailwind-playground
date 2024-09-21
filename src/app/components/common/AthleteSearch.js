@@ -1,5 +1,6 @@
+"use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from 'next/navigation';
 
 // Fake data for search results (replace with API call in production)
 const fakeAthletes = [
@@ -18,7 +19,8 @@ const fakeAthletes = [
 const AthleteSearchComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const navigate = useNavigate();
+
+  const router = useRouter();
 
   // Debounce function
   const debounce = (func, delay) => {
@@ -58,7 +60,7 @@ const AthleteSearchComponent = () => {
 
   // Handle athlete selection
   const handleAthleteSelect = (athleteId) => {
-    navigate(`/athletes/${athleteId}`);
+    router.push(`/athletes/${athleteId}`);
     setSearchTerm("");
     setSearchResults([]);
   };

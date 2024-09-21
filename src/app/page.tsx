@@ -1,8 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import AthleteSearchComponent from "../components/common/AthleteSearch";
+import Link from "next/link";
+import AthleteSearchComponent from "./components/common/AthleteSearch";
 
-const HomePage = () => {
+export default function Home() {
   return (
     <div className="space-y-10">
       {/* Hero Section */}
@@ -22,7 +22,7 @@ const HomePage = () => {
       {/* Quick Links Section */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Link
-          to="/athletes"
+          href="/athletes"
           className="bg-gray-100 p-6 rounded-lg hover:bg-gray-200 transition duration-300"
         >
           <h2 className="text-2xl font-semibold mb-2">Athletes</h2>
@@ -32,7 +32,7 @@ const HomePage = () => {
           </p>
         </Link>
         <Link
-          to="/events"
+          href="/events"
           className="bg-gray-100 p-6 rounded-lg hover:bg-gray-200 transition duration-300"
         >
           <h2 className="text-2xl font-semibold mb-2">Events</h2>
@@ -42,7 +42,7 @@ const HomePage = () => {
           </p>
         </Link>
         <Link
-          to="/records"
+          href="/records"
           className="bg-gray-100 p-6 rounded-lg hover:bg-gray-200 transition duration-300"
         >
           <h2 className="text-2xl font-semibold mb-2">Records</h2>
@@ -65,7 +65,7 @@ const HomePage = () => {
               John Doe sets a new world record of 9.43 seconds in the men's 100m
               sprint.
             </p>
-            <Link to="/news/1" className="text-blue-600 hover:underline">
+            <Link href="/news/1" className="text-blue-600 hover:underline">
               Read more
             </Link>
           </div>
@@ -77,7 +77,7 @@ const HomePage = () => {
               The next Diamond League event is scheduled for next month in
               Paris.
             </p>
-            <Link to="/news/2" className="text-blue-600 hover:underline">
+            <Link href="/news/2" className="text-blue-600 hover:underline">
               Read more
             </Link>
           </div>
@@ -107,6 +107,4 @@ const HomePage = () => {
       </section>
     </div>
   );
-};
-
-export default HomePage;
+}
