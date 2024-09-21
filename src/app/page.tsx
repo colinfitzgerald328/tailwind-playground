@@ -59,10 +59,10 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg shadow">
             <h3 className="text-xl font-semibold mb-2">
-              New World Record in Men's 100m
+              New World Record in Men&apos;s 100m
             </h3>
             <p className="text-gray-600 mb-4">
-              John Doe sets a new world record of 9.43 seconds in the men's 100m
+              John Doe sets a new world record of 9.43 seconds in the men&apos;s 100m
               sprint.
             </p>
             <Link href="/news/1" className="text-blue-600 hover:underline">
