@@ -15,7 +15,7 @@ interface Athlete {
     url_slug: string;
     primary_disciplines: string;
     accomplishments?: string[];
-    personal_bests?: any[]; // You might want to define a more specific type here
+    personal_bests?: string[]; // You might want to define a more specific type here
     gender: string;
     wikipedia_url?: string;
     social_urls?: Record<string, string> | string[];
