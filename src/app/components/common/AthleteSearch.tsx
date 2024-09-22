@@ -1,31 +1,21 @@
 "use client";
+
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from 'next/navigation';
+import { searchForAthlete } from "@/app/services/athleteService";
+import { VectorSearchResult } from "@/app/services/types";
 
-// Fake data for search results (replace with API call in production)
-const fakeAthletes = [
-  { id: 1, name: "Usain Bolt", country: "Jamaica", discipline: "Sprints" },
-  { id: 2, name: "Eliud Kipchoge", country: "Kenya", discipline: "Marathon" },
-  { id: 3, name: "Allyson Felix", country: "USA", discipline: "Sprints" },
-  { id: 4, name: "Mo Farah", country: "UK", discipline: "Long-distance" },
-  {
-    id: 5,
-    name: "Shelly-Ann Fraser-Pryce",
-    country: "Jamaica",
-    discipline: "Sprints",
-  },
-];
-
-const AthleteSearchComponent = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-
+const AthleteSearchComponent: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<VectorSearchResult[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   // Debounce function
-  const debounce = (func, delay) => {
-    let timeoutId;
-    return (...args) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const debounce = <F extends (...args: any[]) => any>(func: F, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: Parameters<F>) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
@@ -36,14 +26,17 @@ const AthleteSearchComponent = () => {
   };
 
   // Search function
-  const searchAthletes = (term) => {
-    const results = fakeAthletes.filter(
-      (athlete) =>
-        athlete.name.toLowerCase().includes(term.toLowerCase()) ||
-        athlete.country.toLowerCase().includes(term.toLowerCase()) ||
-        athlete.discipline.toLowerCase().includes(term.toLowerCase())
-    );
-    setSearchResults(results);
+  const searchAthletes = async (term: string) => {
+    setIsLoading(true);
+    try {
+      const results = await searchForAthlete(term);
+      setSearchResults(results);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      setSearchResults([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Debounced search function
@@ -59,7 +52,7 @@ const AthleteSearchComponent = () => {
   }, [searchTerm, debouncedSearch]);
 
   // Handle athlete selection
-  const handleAthleteSelect = (athleteId) => {
+  const handleAthleteSelect = (athleteId: number) => {
     router.push(`/athletes/${athleteId}`);
     setSearchTerm("");
     setSearchResults([]);
@@ -75,17 +68,22 @@ const AthleteSearchComponent = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        {isLoading && (
+          <div className="absolute right-3 top-2">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+          </div>
+        )}
         {searchResults.length > 0 && (
           <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
             {searchResults.map((athlete) => (
               <div
-                key={athlete.id}
+                key={athlete.athlete_id}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => handleAthleteSelect(athlete.id)}
+                onClick={() => handleAthleteSelect(athlete.athlete_id)}
               >
-                <div className="font-semibold">{athlete.name}</div>
+                <div className="font-semibold">{athlete.full_name}</div>
                 <div className="text-sm text-gray-600">
-                  {athlete.country} - {athlete.discipline}
+                  {athlete.primary_disciplines}
                 </div>
               </div>
             ))}

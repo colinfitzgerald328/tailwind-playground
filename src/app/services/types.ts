@@ -61,3 +61,19 @@ interface CloseMatch {
     primary_disciplines: string;
     hq_images?: string[];
 }
+
+
+export interface AthleteListResult {
+    athlete_id: number;
+    hq_images?: string[];
+    full_name: string;
+    country: string;
+    primary_disciplines: string;
+}
+
+export interface VectorSearchResult {
+    athlete_id: number;
+    hq_images?: string[];
+    full_name: string;
+    primary_disciplines: string;
+  }
