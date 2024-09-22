@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { searchForAthlete } from "@/app/services/athleteService";
 import { VectorSearchResult } from "@/app/services/types";
 
@@ -11,51 +12,32 @@ const AthleteSearchComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  // Debounce function
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const debounce = <F extends (...args: any[]) => any>(func: F, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-    return (...args: Parameters<F>) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+  const debouncedSearch = useCallback(
+    debounce(async (term: string) => {
+      if (term) {
+        setIsLoading(true);
+        try {
+          const results = await searchForAthlete(term);
+          setSearchResults(results);
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          setSearchResults([]);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setSearchResults([]);
       }
-      timeoutId = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
+    }, 300),
+    []
+  );
 
-  // Search function
-  const searchAthletes = async (term: string) => {
-    setIsLoading(true);
-    try {
-      const results = await searchForAthlete(term);
-      setSearchResults(results);
-    } catch (error) {
-      console.error("Error fetching search results:", error);
-      setSearchResults([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Debounced search function
-  const debouncedSearch = useCallback(debounce(searchAthletes, 300), []);
-
-  // Effect to trigger search on searchTerm change
   useEffect(() => {
-    if (searchTerm) {
-      debouncedSearch(searchTerm);
-    } else {
-      setSearchResults([]);
-    }
+    debouncedSearch(searchTerm);
   }, [searchTerm, debouncedSearch]);
 
-  // Handle athlete selection
   const handleAthleteSelect = (athleteId: number) => {
     router.push(`/athletes/${athleteId}`);
-    setSearchTerm("");
-    setSearchResults([]);
   };
 
   return (
@@ -73,25 +55,60 @@ const AthleteSearchComponent: React.FC = () => {
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
           </div>
         )}
-        {searchResults.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-            {searchResults.map((athlete) => (
-              <div
-                key={athlete.athlete_id}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => handleAthleteSelect(athlete.athlete_id)}
-              >
+      </div>
+      {searchResults.length > 0 && (
+        <div className="mt-2 bg-white border border-gray-300 rounded-md shadow-lg">
+          {searchResults.map((athlete) => (
+            <div
+              key={athlete.athlete_id}
+              className="px-4 py-3 hover:bg-gray-100 cursor-pointer flex items-center"
+              onClick={() => handleAthleteSelect(athlete.athlete_id)}
+            >
+              <div className="w-12 h-12 relative mr-4 flex-shrink-0">
+                {athlete.hq_images && athlete.hq_images.length > 0 ? (
+                  <Image
+                    src={athlete.hq_images[0]}
+                    alt={athlete.full_name}
+                    fill
+                    sizes="48px"
+                    className="rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+                    {athlete.full_name.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <div>
                 <div className="font-semibold">{athlete.full_name}</div>
                 <div className="text-sm text-gray-600">
                   {athlete.primary_disciplines}
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 export default AthleteSearchComponent;
+
+// Debounce utility function
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function debounce<F extends (...args: any[]) => any>(func: F, wait: number) {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return function executedFunction(...args: Parameters<F>) {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(later, wait);
+  };
+}
