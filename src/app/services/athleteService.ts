@@ -11,8 +11,6 @@ export const getAthleteById = async (id: number) => {
   }
 };
 
-
-
 export const getAthletesList = async (page: number) => {
   try {
     const response = await api.get(`/athletes/page/${page}`);
@@ -22,9 +20,6 @@ export const getAthletesList = async (page: number) => {
     throw error;
   }
 };
-
-
-
 
 export const searchForAthlete = async (searchQuery: string) => {
   try {

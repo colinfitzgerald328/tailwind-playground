@@ -62,8 +62,8 @@ export default function Home() {
               New World Record in Men&apos;s 100m
             </h3>
             <p className="text-gray-600 mb-4">
-              John Doe sets a new world record of 9.43 seconds in the men&apos;s 100m
-              sprint.
+              John Doe sets a new world record of 9.43 seconds in the men&apos;s
+              100m sprint.
             </p>
             <Link href="/news/1" className="text-blue-600 hover:underline">
               Read more

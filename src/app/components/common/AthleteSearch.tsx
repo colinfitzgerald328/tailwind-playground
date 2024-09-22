@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { searchForAthlete } from "@/app/services/athleteService";
 import { VectorSearchResult } from "@/app/services/types";
 
@@ -29,7 +29,7 @@ const AthleteSearchComponent: React.FC = () => {
         setSearchResults([]);
       }
     }, 300),
-    []
+    [],
   );
 
   useEffect(() => {

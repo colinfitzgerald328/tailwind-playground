@@ -13,22 +13,25 @@ const AthletesListPage = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const observer = useRef<IntersectionObserver | null>(null);
 
-  const lastAthleteElementRef = useCallback((node: HTMLDivElement | null) => {
-    if (loading) return;
-    if (observer.current) observer.current.disconnect();
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setOffset(prevOffset => prevOffset + 1);
-      }
-    });
-    if (node) observer.current.observe(node);
-  }, [loading, hasMore]);
+  const lastAthleteElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setOffset((prevOffset) => prevOffset + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore],
+  );
 
   const fetchAthletes = async () => {
     try {
       setLoading(true);
       const fetchedAthletes = await getAthletesList(offset);
-      setAthletes(prevAthletes => [...prevAthletes, ...fetchedAthletes]);
+      setAthletes((prevAthletes) => [...prevAthletes, ...fetchedAthletes]);
       setHasMore(fetchedAthletes.length > 0);
     } catch (err) {
       console.error("Error fetching athletes:", err);
@@ -54,12 +57,16 @@ const AthletesListPage = () => {
             key={athlete.athlete_id}
             className="block"
           >
-            <div 
+            <div
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
               ref={index === athletes.length - 1 ? lastAthleteElementRef : null}
             >
               <img
-                src={athlete.hq_images ? athlete.hq_images[0] : "/placeholder-image.jpg"}
+                src={
+                  athlete.hq_images
+                    ? athlete.hq_images[0]
+                    : "/placeholder-image.jpg"
+                }
                 alt={`${athlete.full_name}`}
                 className="w-full h-48 object-cover"
               />
@@ -74,8 +81,12 @@ const AthletesListPage = () => {
           </Link>
         ))}
       </div>
-      {loading && <div className="text-center py-4">Loading more athletes...</div>}
-      {!hasMore && <div className="text-center py-4">No more athletes to load</div>}
+      {loading && (
+        <div className="text-center py-4">Loading more athletes...</div>
+      )}
+      {!hasMore && (
+        <div className="text-center py-4">No more athletes to load</div>
+      )}
     </div>
   );
 };

@@ -17,7 +17,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Track and Field Hub",
-  description: "Your ultimate source for track and field athletes, events, and records.",
+  description:
+    "Your ultimate source for track and field athletes, events, and records.",
 };
 
 export default function RootLayout({
@@ -62,10 +63,13 @@ export default function RootLayout({
               </div>
             </div>
           </header>
-          <main className="flex-grow container mx-auto px-4 py-8">{children}</main>
+          <main className="flex-grow container mx-auto px-4 py-8">
+            {children}
+          </main>
           <footer className="bg-gray-200">
             <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-              © {new Date().getFullYear()} Track and Field Hub. All rights reserved.
+              © {new Date().getFullYear()} Track and Field Hub. All rights
+              reserved.
             </div>
           </footer>
         </div>
